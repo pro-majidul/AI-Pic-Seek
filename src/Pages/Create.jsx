@@ -77,7 +77,7 @@ const Create = () => {
     const finalPrompt = `imagine a ${category} : ${prompt}`;
     console.log(finalPrompt);
     const myform = new FormData();
-    myform.append("prompt", prompt);
+    myform.append("prompt", finalPrompt);
 
     const response = await fetch("https://clipdrop-api.co/text-to-image/v1", {
       method: "POST",
