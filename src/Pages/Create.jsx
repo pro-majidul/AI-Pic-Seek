@@ -43,46 +43,77 @@ const Create = () => {
       return true;
     }
   };
-  const handleSubmit = (e) => {
-    e.preventDefault();
 
-    if (!checkUser()) return;
-
-    const form = e.target;
-    const prompt = form.prompt.value;
-    const category = form.category.value;
-    // validation starts
+  const validate = (prompt, category) => {
     if (!category) {
       Swal.fire(
         "Select Category",
         "Select a Category from the dropdown",
         "error"
       );
-      return;
+      return false;
     }
     if (!prompt) {
       Swal.fire("Write a Prompt", "Write a prompt in the input", "error");
-      return;
+      return false;
     }
-    if (!prompt) {
-      Swal.fire("Write a Prompt", "Write a prompt in the input", "error");
-      return;
-    }
+
     if (prompt.trim().length < 20) {
       Swal.fire(
         "Invalid Prompt",
         "make your prompt bigger (minimum 20 character)",
         "error"
       );
-      return;
+      return false;
     }
-    //validation End
+  };
 
+  const generateImageBuffer = async (prompt, category) => {
     console.log({ prompt, category });
     const finalPrompt = `imagine a ${category} : ${prompt}`;
     console.log(finalPrompt);
-    return;
+    const myform = new FormData();
+    myform.append("prompt", prompt);
+
+    const response = await fetch("https://clipdrop-api.co/text-to-image/v1", {
+      method: "POST",
+      headers: {
+        "x-api-key": import.meta.env.VITE_CD_Key,
+      },
+      body: myform,
+    });
+
+    const buffer = await response.arrayBuffer();
+    return buffer;
   };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const prompt = form.prompt.value;
+    const category = form.category.value;
+    if (!checkUser()) return;
+    if (validate(prompt, category)) return;
+
+    const buffer = await generateImageBuffer(prompt, category);
+
+    // buffer here is a binary representation of the returned image
+    // 1. Create a Blob from the buffer
+    // You need to specify the correct MIME type (e.g., 'image/png', 'image/jpeg')
+    const blob = new Blob([buffer], { type: "image/png" });
+    // 2. Create a URL for the Blob
+    const imageUrl = URL.createObjectURL(blob);
+
+    // 3. Use the URL to display the image
+    // a) Create a new Image element
+    const img = new Image();
+    img.src = imageUrl;
+
+    // b) Append it to your HTML body or another element
+    // document.body.appendChild(img);
+    console.log(img);
+  };
+
   return (
     <div>
       <PageTitle>🌱Let&apos;s Create 🐦‍🔥</PageTitle>

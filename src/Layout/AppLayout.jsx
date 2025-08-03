@@ -30,7 +30,7 @@ const AppLayout = () => {
 
       <footer className="footer footer-center bg-cyan-50 glass text-base-content p-4">
         <aside>
-          <p>
+          <p className="text-gray-800">
             Copyright © {new Date().getFullYear()} - All right reserved by ACME
             Industries Ltd
           </p>
