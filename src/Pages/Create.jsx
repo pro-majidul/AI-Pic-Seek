@@ -5,6 +5,10 @@ import Swal from "sweetalert2";
 
 const Create = () => {
   const { user, login } = useContext(AuthContext);
+
+  const ImageUpload = `https://api.imgbb.com/1/upload?key=${
+    import.meta.env.VITE_BB_KEY
+  }`;
   const options = [
     "painting",
     "animated-image",
@@ -87,6 +91,19 @@ const Create = () => {
     return buffer;
   };
 
+  const UploadImageBBGetURL = async (buffer) => {
+    // const blob = new Blob([buffer], { type: "image/png" });
+    const formdata = new FormData();
+    formdata.append("image", new Blob([buffer], { type: "image/png" }));
+
+    const response = await fetch(ImageUpload, {
+      method: "POST",
+      body: formdata,
+    });
+    const data = await response.json();
+    return data;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -96,22 +113,23 @@ const Create = () => {
     if (validate(prompt, category)) return;
 
     const buffer = await generateImageBuffer(prompt, category);
+    const imageURL = await UploadImageBBGetURL(buffer);
 
-    // buffer here is a binary representation of the returned image
-    // 1. Create a Blob from the buffer
-    // You need to specify the correct MIME type (e.g., 'image/png', 'image/jpeg')
-    const blob = new Blob([buffer], { type: "image/png" });
-    // 2. Create a URL for the Blob
-    const imageUrl = URL.createObjectURL(blob);
+    // // buffer here is a binary representation of the returned image
+    // // 1. Create a Blob from the buffer
+    // // You need to specify the correct MIME type (e.g., 'image/png', 'image/jpeg')
+    // const blob = new Blob([buffer], { type: "image/png" });
+    // // 2. Create a URL for the Blob
+    // const imageUrl = URL.createObjectURL(blob);
 
-    // 3. Use the URL to display the image
-    // a) Create a new Image element
-    const img = new Image();
-    img.src = imageUrl;
+    // // 3. Use the URL to display the image
+    // // a) Create a new Image element
+    // const img = new Image();
+    // img.src = imageUrl;
 
-    // b) Append it to your HTML body or another element
-    // document.body.appendChild(img);
-    console.log(img);
+    // // b) Append it to your HTML body or another element
+    // // document.body.appendChild(img);
+    console.log(imageURL);
   };
 
   return (
