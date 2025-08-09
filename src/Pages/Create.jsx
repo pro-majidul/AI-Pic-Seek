@@ -156,8 +156,8 @@ const Create = () => {
         }
       )
       .then((res) => {
-        console.log(res.data);
-        setImageURl((prev) => [...prev, res.data]);
+        console.log(res);
+        setImageURl((prev) => [...prev, res.data.finalImageURL]);
       })
       .catch((err) => {
         if (err.response) {
