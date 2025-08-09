@@ -1,14 +1,16 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import PageTitle from "../components/shared/PageTitle";
 import { AuthContext } from "../provider/AuthProvider";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const Create = () => {
   const { user, login } = useContext(AuthContext);
+  const [imageURl, setImageURl] = useState("");
 
-  const ImageUpload = `https://api.imgbb.com/1/upload?key=${
-    import.meta.env.VITE_BB_KEY
-  }`;
+  // const ImageUpload = `https://api.imgbb.com/1/upload?key=${
+  //   import.meta.env.VITE_BB_KEY
+  // }`;
   const options = [
     "painting",
     "animated-image",
@@ -72,37 +74,41 @@ const Create = () => {
     }
   };
 
-  const generateImageBuffer = async (prompt, category) => {
-    console.log({ prompt, category });
-    const finalPrompt = `imagine a ${category} : ${prompt}`;
-    console.log(finalPrompt);
-    const myform = new FormData();
-    myform.append("prompt", finalPrompt);
+  // const generateImageBuffer = async (prompt, category) => {
+  //   console.log({ prompt, category });
+  //   const finalPrompt = `imagine a ${category} : ${prompt}`;
+  //   console.log(finalPrompt);
+  //   const myform = new FormData();
+  //   myform.append("prompt", finalPrompt);
 
-    const response = await fetch("https://clipdrop-api.co/text-to-image/v1", {
-      method: "POST",
-      headers: {
-        "x-api-key": import.meta.env.VITE_CD_Key,
-      },
-      body: myform,
-    });
+  //   const response = await fetch("https://clipdrop-api.co/text-to-image/v1", {
+  //     method: "POST",
+  //     headers: {
+  //       "x-api-key": import.meta.env.VITE_CD_Key,
+  //     },
+  //     body: myform,
+  //   });
 
-    const buffer = await response.arrayBuffer();
-    return buffer;
-  };
+  //   const buffer = await response.arrayBuffer();
+  //   return buffer;
+  // };
 
-  const UploadImageBBGetURL = async (buffer) => {
-    // const blob = new Blob([buffer], { type: "image/png" });
-    const formdata = new FormData();
-    formdata.append("image", new Blob([buffer], { type: "image/png" }));
+  // const UploadImageBBGetURL = async (buffer, prompt) => {
+  //   // const blob = new Blob([buffer], { type: "image/png" });
+  //   const formdata = new FormData();
+  //   formdata.append(
+  //     "image",
+  //     new Blob([buffer], { type: "image/jpeg" }),
+  //     `${prompt}.jpg`
+  //   );
 
-    const response = await fetch(ImageUpload, {
-      method: "POST",
-      body: formdata,
-    });
-    const data = await response.json();
-    return data;
-  };
+  //   const response = await fetch(ImageUpload, {
+  //     method: "POST",
+  //     body: formdata,
+  //   });
+  //   const data = await response.json();
+  //   return data;
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -112,8 +118,8 @@ const Create = () => {
     if (!checkUser()) return;
     if (validate(prompt, category)) return;
 
-    const buffer = await generateImageBuffer(prompt, category);
-    const imageURL = await UploadImageBBGetURL(buffer);
+    // const buffer = await generateImageBuffer(prompt, category);
+    // const imageURL = await UploadImageBBGetURL(buffer, prompt);
 
     // // buffer here is a binary representation of the returned image
     // // 1. Create a Blob from the buffer
@@ -129,7 +135,38 @@ const Create = () => {
 
     // // b) Append it to your HTML body or another element
     // // document.body.appendChild(img);
-    console.log(imageURL);
+    // console.log(imageURL?.data?.display_url);
+    // const finalImageURL = imageURL?.data?.display_url;
+    // setImageURl(finalImageURL);
+
+    axios
+      .post(
+        "http://localhost:5000/create-image",
+        {
+          email: user?.email || "majidul123tub@gmail.com",
+          username: user?.displayName || "Majidul",
+          prompt,
+          category,
+          userImg: user?.photoURL || "https://api.imgbb.com/1/upload?",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        setImageURl(res.data);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.error("Server error response:", err.response.data);
+        } else {
+          console.error("Error message:", err.message);
+        }
+      });
+    // setImageURl(response);
   };
 
   return (
@@ -172,6 +209,9 @@ const Create = () => {
             <button className="btn join-item btn-primary">Create</button>
           </div>
         </form>
+      </div>
+      <div className="container mx-auto w-full">
+        <img src={imageURl} alt="" />
       </div>
     </div>
   );

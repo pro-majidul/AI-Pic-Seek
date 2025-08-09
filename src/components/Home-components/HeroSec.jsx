@@ -11,12 +11,7 @@ const HeroSec = () => {
       <div className="max-w-xl">
         <h1>Lorem ipsum dolor sit amet.</h1>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Labore cum
-          nulla quod molestiae nostrum quibusdam expedita quaerat tempora
-          reprehenderit! Corrupti maiores delectus optio, voluptas illum iusto
-          dolor nihil vero, magnam laborum cumque numquam vel facilis quod
-          repellendus eligendi corporis! Esse asperiores magni earum nihil
-          aperiam, dicta est perferendis optio natus.
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quidem ut recusandae, doloremque vitae cum consectetur saepe temporibus. Natus quam voluptate ullam voluptatibus laborum cum excepturi molestias saepe error tempora?
         </p>
         <button className=" btn bn-primary"></button>
       </div>
