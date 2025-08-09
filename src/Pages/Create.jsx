@@ -6,7 +6,7 @@ import axios from "axios";
 
 const Create = () => {
   const { user, login } = useContext(AuthContext);
-  const [imageURl, setImageURl] = useState("");
+  const [imageURl, setImageURl] = useState([]);
 
   // const ImageUpload = `https://api.imgbb.com/1/upload?key=${
   //   import.meta.env.VITE_BB_KEY
@@ -157,7 +157,7 @@ const Create = () => {
       )
       .then((res) => {
         console.log(res.data);
-        setImageURl(res.data);
+        setImageURl((prev) => [...prev, res.data]);
       })
       .catch((err) => {
         if (err.response) {
@@ -210,8 +210,14 @@ const Create = () => {
           </div>
         </form>
       </div>
-      <div className="container mx-auto w-full">
-        <img src={imageURl} alt="" />
+      <div className="container mx-auto w-full px-1">
+        <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-5">
+          {imageURl.length == 1 ? (
+            <img src={imageURl[0]} alt="" />
+          ) : (
+            imageURl?.map((url, idx) => <img key={idx} src={url} alt="" />)
+          )}
+        </div>
       </div>
     </div>
   );
