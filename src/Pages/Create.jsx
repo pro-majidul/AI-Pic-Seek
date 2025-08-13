@@ -141,7 +141,7 @@ const Create = () => {
 
     axios
       .post(
-        "http://localhost:5000/create-image",
+        "http://localhost:5000/api/image/create-image",
         {
           email: user?.email || "majidul123tub@gmail.com",
           username: user?.displayName || "Majidul",
@@ -224,3 +224,5 @@ const Create = () => {
 };
 
 export default Create;
+
+// next class start on part 4 ---- get all , get single image data
