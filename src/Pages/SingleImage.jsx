@@ -5,8 +5,8 @@ import PageTitle from "../components/shared/PageTitle";
 const SingleImage = () => {
   const { id } = useParams();
   const [image, setImage] = useState({});
-  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [reply, setReply] = useState("");
 
   useEffect(() => {
     fetch(`http://localhost:5000/api/image/single/${id}`)
@@ -15,32 +15,40 @@ const SingleImage = () => {
   }, [id]);
 
   const handleSend = () => {
+    // const length = input.trim().length;
+    // if (length < 30) {
+    //   alert("please minimum type 30 characters");
+    //   return;
+    // }
     if (input.trim()) {
-      setMessages([...messages, { text: input, id: Date.now() }]);
-      setInput("");
-
-      console.log(
-        "setInput line number 22 ",
-        setInput,
-        "setMessages",
-        setMessages
-      );
+      const information = {
+        imageId: image?._id,
+        prompt: image?.prompt,
+        email: image?.email,
+        comment: input,
+      };
+      console.log(information);
+      fetch("http://localhost:5000/api/comment/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(information),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setReply(data.reply);
+        })
+        .catch((err) => console.log(err));
+      setInput(" ");
     }
   };
-
-  // const handelSubmit = (e) => {
-  //   e.preventDefault();
-  //   const prompt = e.target.prompt.value;
-  //   const comment = e.target.comment.value;
-  //   const imageId = image?._id;
-  //   console.log(prompt, comment, imageId);
-  // };
+  // console.log(image);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && input.trim()) {
       handleSend();
-
-      console.log("line number 38", input);
     }
   };
 
@@ -54,13 +62,10 @@ const SingleImage = () => {
       </div>
       <div className="container mx-auto w-full bg-amber-50">
         <div className="chat chat-start">
-          <div className="chat-bubble">
-            Its over Anakin,
-            <br />I have the high ground.
-          </div>
+          <div className="chat-bubble">{reply}</div>
         </div>
         <div className="chat chat-end">
-          <div className="chat-bubble">You underestimate my power!</div>
+          <div className="chat-bubble">{input}</div>
         </div>
 
         <div className="flex items-center p-4 border-t border-gray-200">
