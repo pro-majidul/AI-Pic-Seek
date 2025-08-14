@@ -18,20 +18,29 @@ const SingleImage = () => {
     if (input.trim()) {
       setMessages([...messages, { text: input, id: Date.now() }]);
       setInput("");
+
+      console.log(
+        "setInput line number 22 ",
+        setInput,
+        "setMessages",
+        setMessages
+      );
     }
   };
 
-  const handelSubmit = (e) => {
-    e.preventDefault();
-    const prompt = e.target.prompt.value;
-    const comment = e.target.comment.value;
-    const imageId = image?._id;
-    console.log(prompt, comment, imageId);
-  };
+  // const handelSubmit = (e) => {
+  //   e.preventDefault();
+  //   const prompt = e.target.prompt.value;
+  //   const comment = e.target.comment.value;
+  //   const imageId = image?._id;
+  //   console.log(prompt, comment, imageId);
+  // };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && input.trim()) {
       handleSend();
+
+      console.log("line number 38", input);
     }
   };
 
