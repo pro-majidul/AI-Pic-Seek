@@ -101,7 +101,15 @@ const SingleImage = () => {
                 msg.role === "user" ? "chat-end" : "chat-start"
               }`}
             >
-              <div className="chat-bubble">{msg.text}</div>
+              <div
+                className={`chat-bubble ${
+                  msg.role === "user"
+                    ? "bg-blue-500 text-white" // user bubble color
+                    : "bg-gray-200 text-black" // bot bubble color
+                }`}
+              >
+                {msg.text}
+              </div>
             </div>
           ))}
         </div>
